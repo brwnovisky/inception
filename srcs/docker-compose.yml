@@ -1,0 +1,77 @@
+version: "3.8"
+
+volumes:
+  mariadb:
+    name: mariadb
+    external: true
+  wordpress:
+    name: wordpress
+    external: true
+  static:
+    name: static
+    external: true
+
+networks:
+  inception:
+    driver: bridge
+
+services:
+  nginx:
+    build: ./requirements/nginx
+    image: nginx
+    container_name: nginx
+    ports:
+      - "443:443"
+    restart: always
+    networks:
+      - inception
+    volumes:
+      - wordpress:/var/www/html
+    depends_on:
+      - mariadb
+      - wordpress
+
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    restart: always
+    env_file:
+      - .env
+    build:
+      context: ./requirements/mariadb
+      args:
+        - MYSQL_DATABASE
+        - MYSQL_USER
+        - MYSQL_PASSWORD
+        - MYSQL_ROOT_PASSWORD
+    networks:
+      - inception
+    volumes:
+      - mariadb:/var/lib/mysql
+
+  wordpress:
+    depends_on:
+      - mariadb
+    build: ./requirements/wordpress
+    image: wordpress
+    container_name: wordpress
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - inception
+    volumes:
+      - wordpress:/var/www/html
+
+  static:
+    depends_on:
+      - nginx
+    image: static
+    container_name: static
+    init: true
+    build: ./requirements/bonus/static
+    networks:
+      - inception
+    volumes:
+      - static:/usr/src/app
+    restart: always
