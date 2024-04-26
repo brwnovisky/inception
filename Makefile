@@ -6,7 +6,7 @@ fix:
 	sudo apt -y install docker-compose-plugin
 
 hosts:
-	@bash ./requirements/tools/hosts.sh
+	@bash ./srcs/requirements/tools/hosts.sh
 
 volumes:
 	@sudo mkdir -p /home/bluiz-al/data/wordpress
