@@ -6,9 +6,7 @@ fix:
 	sudo apt -y install docker-compose-plugin
 
 hosts:
-	@if ! grep "bluiz-al.42.fr" /etc/hosts; then \
-		sudo sed -i '2i\127.0.0.1\tbluiz-al.42.fr' /etc/hosts; \
-	fi
+	@bash ./requirements/tools/hosts.sh
 
 volumes:
 	@sudo mkdir -p /home/bluiz-al/data/wordpress
